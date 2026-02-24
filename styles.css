@@ -1,0 +1,57 @@
+:root {
+  /*Fonts*/
+  --font-heading: "Manrope", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-button: "Manrope", sans-serif;
+  --font-nav: "Manrope", sans-serif;
+  /*Size*/
+  --fs-h1: clamp(28px, 5vw, 42px);
+  --fs-h2: clamp(22px, 3.5vw, 30px);
+  --fs-h3: clamp(18px, 2.5vw, 22px);
+  --fs-body-large: clamp(16px, 1.5vw, 18px);
+  --fs-body: clamp(14px, 1.2vw, 16px);
+  --fs-caption: clamp(12px, 1vw, 14px);
+  --fs-button: clamp(14px, 1.2vw, 16px);
+  --fs-nav: clamp(14px, 1, 2vw, 16px);
+  /*Colors*/
+  --primary-actions: #8c0c13;
+  --secondary-color: #590414;
+  --accent-color_01: #8c5230;
+  --accent-color_02: #8c7365;
+  --background_main: #d9d0c7;
+  --background_cards: #ffffff;
+  --text_01: #1a1a1a;
+  --text_02: #6b6b6b;
+}
+
+h1 {
+  font-family: var(--font-heading);
+  font-size: var(--fs-h1);
+  color: var(--text_01);
+}
+h2 {
+  font-family: var(--font-heading);
+  font-size: var(--fs-h2);
+  color: var(--text_01);
+}
+h3 {
+  font-family: var(--font-heading);
+  font-size: var(--fs-h3);
+  color: var(--text_01);
+}
+body {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--text_01);
+}
+nav {
+  font-family: var(--font-nav);
+  font-size: var(--fs-nav);
+  color: var(--text_01);
+}
+button {
+  font-family: var(--font-button);
+  font-size: var(--fs-button);
+  color: var(--text_01);
+  background-color: var(--primary-actions);
+}
