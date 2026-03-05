@@ -47,3 +47,15 @@
   object-fit: cover;
   display: block;
 }
+.details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.ameneties-list {
+  list-style-type: none;
+  column-count: 3;
+}
+.booking-form {
+  display: grid;
+}
