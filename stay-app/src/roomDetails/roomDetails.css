@@ -4,8 +4,7 @@
   align-content: space-around;
   align-items: center;
   max-width: 1200px;
-  height: 127px;
-  padding: 15px 16px;
+  padding: 15px;
   border-radius: 24px;
   gap: 10px;
   margin: auto;
@@ -58,4 +57,33 @@
 }
 .booking-form {
   display: grid;
+}
+
+form {
+  display: flex;
+  align-content: space-around;
+  justify-content: space-evenly;
+  background-color: var(--background_cards);
+  border-radius: 16px;
+  margin-top: 20px;
+  padding: 10px;
+}
+button {
+  margin: 10px;
+}
+.review-form {
+  margin: 50px;
+}
+.reviews {
+  display: flex;
+  justify-content: space-around;
+  max-width: 800px;
+}
+.card {
+  background-color: var(--background_cards);
+  padding: 50px;
+  border-radius: 16px;
+  margin-top: 20px;
+  width: 100px;
+  height: 40px;
 }

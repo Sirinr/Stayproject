@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="no">
   <head>
@@ -77,24 +78,35 @@
             <li>Tre</li>
             <li>Kolonner</li>
           </ul>
-          <div class="review">
-            <p>Her kommer det etterhvert anmeldelser fra gjester</p>
-          </div>
+          
+            <form action="#" class="review-form">
+              <label for="review">Skriv en anmeldelse</label>
+              <input type="text" name="review" id="review"></input>
+            </form>
+        
         </article>
         <form action="#">
           <div class="booking-form">
+            <div>
             <label for="check-in">Check-in</label>
             <input type="date" class="check-in" name="check-in"></input>
-            <label for="check-out"></label>
-            <input type="date" class="check-out" name="check-out">Check out</input>
-            <label for="guest-number"></label>
-            <input type="number" class="guest-number" name="guest-number"> gjester</input>
-            <label for="inqueries"></label>
-            <input type="text" class="inqueries" name="inqueries">Melding/forespørsel</input>
-            <button>Reserver</button>
+            <label for="check-out">Check-out</label>
+            <input type="date" class="check-out" name="check-out"></input>
+            </div>
+            <label for="guest-number">Antall gjester</label>
+            <input type="number" class="guest-number" name="guest-number"></input>
+            <label for="inqueries">Forespørsel</label>
+            <input type="text" class="inqueries" name="inqueries"></input>
+            <button>Send forespørsel</button>
           </div>
-        </form>
+        </form> 
       </section>
+<div class="reviews">
+   <div class="card">Anmeldelse 1</div>
+   <div class="card">Anmeldelse 2</div>
+   <div class="card">Se alle anmeldelser</div>
+
+</div>
     </main>
     <script type="module" src="roomDetails.ts"></script>
   </body>
