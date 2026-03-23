@@ -76,8 +76,8 @@ button {
 }
 .reviews {
   display: flex;
-  justify-content: space-around;
-  max-width: 800px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 .card {
   background-color: var(--background_cards);
@@ -86,4 +86,5 @@ button {
   margin-top: 20px;
   width: 100px;
   height: 40px;
+  margin: 20px;
 }
