@@ -1,6 +1,10 @@
 import "./styles/base.css"
 import "./styles/components.css"
 import "./styles/pages.css"
-import { render } from "./pages/myBookings/myBookings"
+import { MyBookingsPage } from "./pages/myBookings/myBookings"
 
-render()
+const app = document.querySelector("#app")
+
+if (app) {
+  app.innerHTML = MyBookingsPage()
+}
