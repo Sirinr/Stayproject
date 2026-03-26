@@ -1,9 +1,5 @@
-
 import { Header } from "../../components/header"
 import { Footer } from "../../components/footer"
-
-
-
 
 let bookings = [
   {
@@ -117,10 +113,10 @@ const pastBookings = bookings.filter(
 )
 
   return `
-    <section class="my-bookings-section container">
-      <div class="my-bookings-section__header">
-        <h1 class="my-bookings-section__title">My Bookings</h1>
-</div>
+   <section class="my-bookings-section container">
+  <div class="my-bookings-section__header">
+    <h1 class="my-bookings-section__title">My Bookings</h1>
+  </div>
 
 
 <h2 class="my-bookings-section__subtitle"> Active </h2>
@@ -136,7 +132,7 @@ ${activeBookings.map((booking) => `
     <div class="booking-card__content">
     <div class="booking-card__top">
     <h3 class="booking-card__title">The name</h3>
-    <button class=!booking-card__icon edit-btn" data-id=${booking.id}">✎</button>
+    <button class="booking-card__icon edit-btn" data-id=${booking.id}">✎</button>
             </div>
 
     <p class="booking-card__location">Location</p>
@@ -169,6 +165,8 @@ ${activeBookings.map((booking) => `
             <button class="booking-card__button" type="button">See details</button>
           </div>
         </article>
+        
+
       `).join('')}
 
       <div class="rooms-section__more">
