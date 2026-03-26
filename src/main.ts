@@ -1,11 +1,6 @@
 import "./styles/base.css"
 import "./styles/components.css"
 import "./styles/pages.css"
-import { LoginPage, setupLoginPage } from "./pages/logIn/logIn"
+import { render } from "./pages/myBookings/myBookings"
 
-const app = document.querySelector("#app")
-
-if (app) {
-  app.innerHTML = LoginPage()
-  setupLoginPage()
-}
+render()
