@@ -147,7 +147,7 @@ button {
   font-size: var(--fs-button);
   line-height: var(--lh-button);
   font-weight: var(--fw-button);
-  color: var(--text_03);
+  color: var(--text_04);
   border: none;
   cursor: pointer;
   background: none;
