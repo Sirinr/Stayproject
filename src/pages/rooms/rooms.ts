@@ -13,35 +13,95 @@ type ApiRoom = {
 }
 
 function attachRoomsListeners() {
-  // Add room button
+  const roomFormOverlay = document.querySelector('.room-form-overlay')
+  const roomForm = document.querySelector<HTMLFormElement>('#room-form')
   const addButton = document.querySelector('.rooms-section__add')
-  if (addButton) {
-    addButton.addEventListener('click', async () => {
-      const name = prompt('Enter room name:')
-      if (!name) return
+  const closeButton = document.querySelector('.room-form__close')
+  const cancelButton = document.querySelector('.room-form__cancel')
+  const imagePreview = document.querySelector<HTMLElement>('.room-form-preview__image')
+  const fileInput = document.querySelector<HTMLInputElement>('#image-file')
 
-      const location = prompt('Enter location:')
-      if (!location) return
+  let selectedImageUrl = ''
 
-      const priceStr = prompt('Enter price per night:')
-      const pricePrNight = parseFloat(priceStr || '0')
-      if (isNaN(pricePrNight)) return
-
-      const image = prompt('Enter image URL:')
-      if (!image) return
-
-      const ratingStr = prompt('Enter rating (0-5):')
-      const rating = parseFloat(ratingStr || '0')
-      if (isNaN(rating) || rating < 0 || rating > 5) return
-
-      try {
-        await addRoom({ name, location, pricePrNight, image, rating })
-        ;(window as any).renderApp()
-      } catch (error) {
-        alert('Failed to add room: ' + (error as Error).message)
-      }
-    })
+  const clearPreviewImage = () => {
+    if (!imagePreview) return
+    imagePreview.style.backgroundImage = ''
+    imagePreview.style.backgroundSize = ''
+    imagePreview.classList.remove('room-form-preview__image--filled')
   }
+
+  const setPreviewImage = (imageUrl: string) => {
+    if (!imagePreview) return
+    imagePreview.style.backgroundImage = `url("${imageUrl}")`
+    imagePreview.style.backgroundSize = 'cover'
+    imagePreview.classList.add('room-form-preview__image--filled')
+  }
+
+  const showRoomForm = () => {
+    roomFormOverlay?.classList.remove('hidden')
+  }
+
+  const closeRoomForm = () => {
+    roomFormOverlay?.classList.add('hidden')
+    roomForm?.reset()
+    selectedImageUrl = ''
+    clearPreviewImage()
+  }
+
+  if (addButton) {
+    addButton.addEventListener('click', () => showRoomForm())
+  }
+
+  if (closeButton) {
+    closeButton.addEventListener('click', () => closeRoomForm())
+  }
+
+  if (cancelButton) {
+    cancelButton.addEventListener('click', () => closeRoomForm())
+  }
+
+  roomFormOverlay?.addEventListener('click', (event) => {
+    if (event.target === roomFormOverlay) {
+      closeRoomForm()
+    }
+  })
+
+  imagePreview?.addEventListener('click', () => {
+    fileInput?.click()
+  })
+
+  fileInput?.addEventListener('change', (event) => {
+    const target = event.target as HTMLInputElement
+    const file = target.files?.[0]
+    if (file && imagePreview) {
+      const imageUrl = URL.createObjectURL(file)
+      selectedImageUrl = imageUrl
+      setPreviewImage(imageUrl)
+    }
+  })
+
+  roomForm?.addEventListener('submit', async (event) => {
+    event.preventDefault()
+
+    const formData = new FormData(roomForm)
+    const name = (formData.get('name') as string).trim()
+    const location = (formData.get('location') as string).trim()
+    const pricePrNight = parseFloat((formData.get('price') as string) || '0')
+    const rating = parseFloat((formData.get('rating') as string) || '0')
+
+    if (!name || !location || !selectedImageUrl || isNaN(pricePrNight) || isNaN(rating)) {
+      alert('Please fill in all fields correctly.')
+      return
+    }
+
+    try {
+      await addRoom({ name, location, pricePrNight, image: selectedImageUrl, rating })
+      closeRoomForm()
+      ;(window as any).renderApp()
+    } catch (error) {
+      alert('Failed to add room: ' + (error as Error).message)
+    }
+  })
 
   // Edit buttons
   document.querySelectorAll('.room-card__edit').forEach(button => {
@@ -129,6 +189,49 @@ export async function RoomsPage() {
           Add room
           <img src="/icons/icon-plus.svg" alt="">
         </button>
+      </div>
+
+      <div class="room-form-overlay hidden">
+        <div class="room-form-modal">
+          <div class="room-form-header">
+            <h2 class="room-form-title">Create room</h2>
+            <button type="button" class="room-form__close" aria-label="Close form">
+              <img src="/icons/icon-close.svg" alt="Close">
+            </button>
+          </div>
+
+          <div class="room-form-preview">
+            <div class="room-form-preview__image"></div>
+            <input type="file" id="image-file" accept="image/*" style="display: none;">
+          </div>
+
+          <form class="room-form" id="room-form">
+            <div class="room-form__group">
+              <label class="room-form__label" for="name">Name / Title</label>
+              <input class="room-form__input" id="name" name="name" type="text" placeholder="Name Name" required>
+            </div>
+
+            <div class="room-form__group">
+              <label class="room-form__label" for="location">Location</label>
+              <input class="room-form__input" id="location" name="location" type="text" placeholder="Place" required>
+            </div>
+
+            <div class="room-form__group">
+              <label class="room-form__label" for="rating">Rating / Future</label>
+              <input class="room-form__input" id="rating" name="rating" type="number" step="0.1" min="0" max="5" placeholder="4.9" required>
+            </div>
+
+            <div class="room-form__group">
+              <label class="room-form__label" for="price">Price per night</label>
+              <input class="room-form__input" id="price" name="price" type="number" step="0.01" min="0" placeholder="$ 0.00" required>
+            </div>
+
+            <div class="room-form__actions">
+              <button type="button" class="btn-main btn-secondary room-form__cancel">Cancel</button>
+              <button type="submit" class="btn-main room-form__submit">Create</button>
+            </div>
+          </form>
+        </div>
       </div>
 
       <div class="rooms-grid">

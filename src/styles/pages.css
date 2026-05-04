@@ -218,3 +218,120 @@
   }
 }
 
+.room-form-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 50;
+  padding: 24px;
+}
+
+.room-form-overlay.hidden {
+  display: none;
+}
+
+.room-form-modal {
+  width: min(100%, 640px);
+  background: var(--background_cards);
+  border-radius: var(--radius-main);
+  padding: 28px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.15);
+}
+
+.room-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.room-form-title {
+  margin: 0;
+  font-size: var(--fs-h2);
+}
+
+.room-form-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.room-form-preview__image {
+  width: 100%;
+  max-width: 520px;
+  height: 220px;
+  background-color: var(--background_main);
+  border-radius: var(--radius-main);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  position: relative;
+}
+
+.room-form-preview__image::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  background-image: url('/icons/icon-image.svg');
+  background-size: 48px 48px;
+  background-repeat: no-repeat;
+  opacity: 0.4;
+}
+
+.room-form-preview__image--filled::before {
+  opacity: 0;
+}
+
+.room-form-preview__image:hover {
+  opacity: 0.7;
+}
+
+.room-form__group {
+  margin-bottom: 18px;
+}
+
+.room-form__label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: var(--fs-body);
+  color: var(--text_01);
+}
+
+.room-form__input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--text_03);
+  border-radius: var(--radius-main);
+  background: var(--background_cards);
+  color: var(--text_01);
+  font: inherit;
+}
+
+.room-form__input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(140, 81, 48, 0.15);
+}
+
+.room-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.room-form__cancel {
+  background-color: var(--background_cards);
+  color: var(--text_01);
+}
+

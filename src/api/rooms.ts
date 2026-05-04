@@ -60,7 +60,7 @@ export async function updateRoom(roomId: number, roomData: {
   rating?: number
 }) {
   const response = await fetch(`http://localhost:3000/api/rooms/${roomId}`, {
-    method: 'PUT',
+    method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${API_KEY}`
