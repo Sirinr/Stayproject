@@ -242,16 +242,24 @@
 }
 
 .room-form-header {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  justify-content: center;
   margin-bottom: 24px;
 }
 
 .room-form-title {
   margin: 0;
   font-size: var(--fs-h2);
+  text-align: center;
+}
+
+.room-form__close {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .room-form-preview {
