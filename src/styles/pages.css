@@ -218,7 +218,8 @@
   }
 }
 
-.room-form-overlay {
+.room-form-overlay,
+.room-edit-form-overlay {
   position: fixed;
   inset: 0;
   display: flex;
@@ -229,7 +230,8 @@
   padding: 24px;
 }
 
-.room-form-overlay.hidden {
+.room-form-overlay.hidden,
+.room-edit-form-overlay.hidden {
   display: none;
 }
 
@@ -255,11 +257,29 @@
   text-align: center;
 }
 
-.room-form__close {
+.room-form__close,
+.room-edit-form__close {
   position: absolute;
   right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 0;
+  transition: opacity 0.2s;
+}
+
+.room-form__close:hover,
+.room-edit-form__close:hover {
+  opacity: 0.6;
+}
+
+.room-form__close img,
+.room-edit-form__close img {
+  width: 20px;
+  height: 20px;
+  display: block;
 }
 
 .room-form-preview {

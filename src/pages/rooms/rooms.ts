@@ -3,6 +3,15 @@
 import { RoomCard } from '../../components/roomCard'
 import { getRooms, addRoom, deleteRoom, updateRoom } from '../../api/rooms'
 
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result as string)
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
 type ApiRoom = {
   id: number
   name: string
@@ -12,7 +21,7 @@ type ApiRoom = {
   rating: number
 }
 
-function attachRoomsListeners() {
+function attachRoomsListeners(rooms: ApiRoom[]) {
   const roomFormOverlay = document.querySelector('.room-form-overlay')
   const roomForm = document.querySelector<HTMLFormElement>('#room-form')
   const addButton = document.querySelector('.rooms-section__add')
@@ -70,11 +79,11 @@ function attachRoomsListeners() {
     fileInput?.click()
   })
 
-  fileInput?.addEventListener('change', (event) => {
+  fileInput?.addEventListener('change', async (event) => {
     const target = event.target as HTMLInputElement
     const file = target.files?.[0]
     if (file && imagePreview) {
-      const imageUrl = URL.createObjectURL(file)
+      const imageUrl = await fileToBase64(file)
       selectedImageUrl = imageUrl
       setPreviewImage(imageUrl)
     }
@@ -103,35 +112,102 @@ function attachRoomsListeners() {
     }
   })
 
+  // Edit form
+  const editFormOverlay = document.querySelector('.room-edit-form-overlay')
+  const editForm = document.querySelector<HTMLFormElement>('#room-edit-form')
+  const editImagePreview = document.querySelector<HTMLElement>('.room-edit-form-preview__image')
+  const editFileInput = document.querySelector<HTMLInputElement>('#edit-image-file')
+
+  let editSelectedImageUrl = ''
+  let currentEditRoomId = 0
+
+  const setEditPreviewImage = (imageUrl: string) => {
+    if (!editImagePreview) return
+    editImagePreview.style.backgroundImage = `url("${imageUrl}")`
+    editImagePreview.style.backgroundSize = 'cover'
+    editImagePreview.classList.add('room-form-preview__image--filled')
+  }
+
+  const clearEditPreviewImage = () => {
+    if (!editImagePreview) return
+    editImagePreview.style.backgroundImage = ''
+    editImagePreview.style.backgroundSize = ''
+    editImagePreview.classList.remove('room-form-preview__image--filled')
+  }
+
+  const closeEditForm = () => {
+    editFormOverlay?.classList.add('hidden')
+    editForm?.reset()
+    editSelectedImageUrl = ''
+    currentEditRoomId = 0
+    clearEditPreviewImage()
+  }
+
+  document.querySelector('.room-edit-form__close')?.addEventListener('click', () => closeEditForm())
+  document.querySelector('.room-edit-form__cancel')?.addEventListener('click', () => closeEditForm())
+
+  editFormOverlay?.addEventListener('click', (event) => {
+    if (event.target === editFormOverlay) closeEditForm()
+  })
+
+  editImagePreview?.addEventListener('click', () => editFileInput?.click())
+
+  editFileInput?.addEventListener('change', async (event) => {
+    const file = (event.target as HTMLInputElement).files?.[0]
+    if (file) {
+      const imageUrl = await fileToBase64(file)
+      editSelectedImageUrl = imageUrl
+      setEditPreviewImage(imageUrl)
+    }
+  })
+
+  editForm?.addEventListener('submit', async (event) => {
+    event.preventDefault()
+
+    const formData = new FormData(editForm)
+    const name = (formData.get('name') as string).trim()
+    const location = (formData.get('location') as string).trim()
+    const pricePrNight = parseFloat((formData.get('price') as string) || '0')
+    const rating = parseFloat((formData.get('rating') as string) || '0')
+
+    if (!name || !location || !editSelectedImageUrl || isNaN(pricePrNight) || isNaN(rating)) {
+      alert('Please fill in all fields correctly.')
+      return
+    }
+
+    try {
+      await updateRoom(currentEditRoomId, { name, location, pricePrNight, image: editSelectedImageUrl, rating })
+      closeEditForm()
+      ;(window as any).renderApp()
+    } catch (error) {
+      alert('Failed to update room: ' + (error as Error).message)
+    }
+  })
+
   // Edit buttons
   document.querySelectorAll('.room-card__edit').forEach(button => {
-    button.addEventListener('click', async (e) => {
+    button.addEventListener('click', (e) => {
       const roomId = parseInt((e.currentTarget as HTMLElement).dataset.roomId || '0')
       if (!roomId) return
 
-      const name = prompt('Enter new room name:')
-      if (!name) return
+      const room = rooms.find(r => r.id === roomId)
+      if (!room) return
 
-      const location = prompt('Enter new location:')
-      if (!location) return
+      currentEditRoomId = roomId
+      editSelectedImageUrl = room.image
 
-      const priceStr = prompt('Enter new price per night:')
-      const pricePrNight = parseFloat(priceStr || '0')
-      if (isNaN(pricePrNight)) return
+      const nameInput = editForm?.querySelector<HTMLInputElement>('#edit-name')
+      const locationInput = editForm?.querySelector<HTMLInputElement>('#edit-location')
+      const ratingInput = editForm?.querySelector<HTMLInputElement>('#edit-rating')
+      const priceInput = editForm?.querySelector<HTMLInputElement>('#edit-price')
 
-      const image = prompt('Enter new image URL:')
-      if (!image) return
+      if (nameInput) nameInput.value = room.name
+      if (locationInput) locationInput.value = room.location
+      if (ratingInput) ratingInput.value = String(room.rating)
+      if (priceInput) priceInput.value = String(room.pricePrNight)
 
-      const ratingStr = prompt('Enter new rating (0-5):')
-      const rating = parseFloat(ratingStr || '0')
-      if (isNaN(rating) || rating < 0 || rating > 5) return
-
-      try {
-        await updateRoom(roomId, { name, location, pricePrNight, image, rating })
-        ;(window as any).renderApp()
-      } catch (error) {
-        alert('Failed to update room: ' + (error as Error).message)
-      }
+      setEditPreviewImage(room.image)
+      editFormOverlay?.classList.remove('hidden')
     })
   })
 
@@ -218,17 +294,60 @@ export async function RoomsPage() {
 
             <div class="room-form__group">
               <label class="room-form__label" for="rating">Rating / Future</label>
-              <input class="room-form__input" id="rating" name="rating" type="number" step="0.1" min="0" max="5" placeholder="4.9" required>
+              <input class="room-form__input" id="rating" name="rating" type="number" step="0.5" min="0" max="5" placeholder="4.5" required>
             </div>
 
             <div class="room-form__group">
               <label class="room-form__label" for="price">Price per night</label>
-              <input class="room-form__input" id="price" name="price" type="number" step="0.01" min="0" placeholder="$ 0.00" required>
+              <input class="room-form__input" id="price" name="price" type="number" step="100" min="0" placeholder="0" required>
             </div>
 
             <div class="room-form__actions">
               <button type="button" class="btn-main btn-secondary room-form__cancel">Cancel</button>
               <button type="submit" class="btn-main room-form__submit">Create</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="room-edit-form-overlay hidden">
+        <div class="room-form-modal">
+          <div class="room-form-header">
+            <h2 class="room-form-title">Edit room</h2>
+            <button type="button" class="room-edit-form__close" aria-label="Close form">
+              <img src="/icons/icon-close.svg" alt="Close">
+            </button>
+          </div>
+
+          <div class="room-form-preview">
+            <div class="room-edit-form-preview__image room-form-preview__image"></div>
+            <input type="file" id="edit-image-file" accept="image/*" style="display: none;">
+          </div>
+
+          <form class="room-form" id="room-edit-form">
+            <div class="room-form__group">
+              <label class="room-form__label" for="edit-name">Name / Title</label>
+              <input class="room-form__input" id="edit-name" name="name" type="text" placeholder="Name Name" required>
+            </div>
+
+            <div class="room-form__group">
+              <label class="room-form__label" for="edit-location">Location</label>
+              <input class="room-form__input" id="edit-location" name="location" type="text" placeholder="Place" required>
+            </div>
+
+            <div class="room-form__group">
+              <label class="room-form__label" for="edit-rating">Rating / Future</label>
+              <input class="room-form__input" id="edit-rating" name="rating" type="number" step="0.5" min="0" max="5" placeholder="4.5" required>
+            </div>
+
+            <div class="room-form__group">
+              <label class="room-form__label" for="edit-price">Price per night</label>
+              <input class="room-form__input" id="edit-price" name="price" type="number" step="100" min="0" placeholder="0" required>
+            </div>
+
+            <div class="room-form__actions">
+              <button type="button" class="btn-main btn-secondary room-edit-form__cancel">Cancel</button>
+              <button type="submit" class="btn-main room-form__submit">Save</button>
             </div>
           </form>
         </div>
@@ -248,6 +367,6 @@ export async function RoomsPage() {
 
   return {
     html,
-    attachListeners: () => attachRoomsListeners()
+    attachListeners: () => attachRoomsListeners(rooms)
   }
 }
