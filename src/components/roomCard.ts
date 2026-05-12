@@ -6,6 +6,7 @@ type RoomCardProps = {
   rating: string
   price: string
   isBooked?: boolean
+  roomId: number
 }
 
 export function RoomCard({
@@ -14,7 +15,8 @@ export function RoomCard({
   location,
   rating,
   price,
-  isBooked = false
+  isBooked = false,
+  roomId
 }: RoomCardProps) {
   return `
     <article class="room-card ${isBooked ? 'room-card--booked' : ''}">
@@ -31,9 +33,14 @@ export function RoomCard({
       <div class="room-card__content">
         <div class="room-card__top">
           <h3 class="room-card__title">${title}</h3>
-          <button class="room-card__edit" type="button" aria-label="Edit room">
-            <img src="/icons/icon-edit.svg" alt="">
-          </button>
+          <div class="room-card__actions">
+            <button class="room-card__edit" type="button" aria-label="Edit room" data-room-id="${roomId}">
+              <img src="/icons/icon-edit.svg" alt="">
+            </button>
+            <button class="room-card__delete" type="button" aria-label="Delete room" data-room-id="${roomId}">
+              <img src="/icons/icon-delete.svg" alt="">
+            </button>
+          </div>
         </div>
 
         <p class="room-card__location">${location}</p>

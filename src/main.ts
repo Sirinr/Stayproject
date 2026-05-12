@@ -7,17 +7,27 @@ import { Footer } from './components/footer'
 import { Hero } from './components/hero'
 import { RoomsPage } from './pages/rooms/rooms'
 
-const app = document.querySelector<HTMLDivElement>('#app');
+const app = document.querySelector<HTMLDivElement>('#app')
 
-if (app) {
+async function renderApp() {
+  if (!app) return
+
+  const roomsPage = await RoomsPage()
+
   app.innerHTML = `
     ${Header()}
 
     <main>
       ${Hero()}
-      ${RoomsPage()}
+      ${roomsPage.html}
     </main>
     
     ${Footer()}
   `
+
+  roomsPage.attachListeners()
 }
+
+;(window as any).renderApp = renderApp
+
+renderApp()

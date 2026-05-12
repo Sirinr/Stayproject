@@ -333,7 +333,14 @@
   font-size: var(--fs-h3);
 }
 
-.room-card__edit {
+.room-card__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.room-card__edit,
+.room-card__delete {
   border: none;
   background: transparent;
   padding: 0;
@@ -341,13 +348,15 @@
   transition: 0.3s ease;
 }
 
-.room-card__edit:hover {
+.room-card__edit:hover,
+.room-card__delete:hover {
   opacity: 0.7;
 }
 
-.room-card__edit img {
-  width: 24px;
-  height: 24px;
+.room-card__edit img,
+.room-card__delete img {
+  width: 20px;
+  height: 20px;
 }
 
 .room-card__location {
