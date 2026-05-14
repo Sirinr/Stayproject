@@ -3,14 +3,26 @@
 import { RoomCard } from '../../components/roomCard'
 import { getRooms, addRoom, deleteRoom, updateRoom } from '../../api/rooms'
 
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(reader.result as string)
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
-}
+const ROOM_IMAGES = [
+  '/images/room-1.jpg',
+  '/images/room-2.jpg',
+  '/images/room-3.jpg',
+  '/images/room-4.jpg',
+  '/images/room-5.jpg',
+  '/images/room-6.jpg',
+  '/images/room-7.jpg',
+  '/images/room-8.jpg',
+  '/images/room-9.jpg',
+  '/images/room-10.jpg',
+  '/images/room-11.jpg',
+  '/images/room-details-main.jpg',
+  '/images/room-details-1.jpg',
+  '/images/room-details-2.jpg',
+  '/images/room-details-3.jpg',
+  '/images/room-details-4.jpeg',
+]
+
+const IMAGE_GRID_VISIBLE = 6
 
 type ApiRoom = {
   id: number
@@ -21,72 +33,72 @@ type ApiRoom = {
   rating: number
 }
 
+function buildImageGrid(): string {
+  const thumbs = ROOM_IMAGES.map((src, i) => `
+    <img class="room-form-images__thumb${i >= IMAGE_GRID_VISIBLE ? ' room-form-images__thumb--hidden' : ''}" src="${src}" alt="Room image">
+  `).join('')
+
+  return `
+    <div class="room-form-images__grid">${thumbs}</div>
+    ${ROOM_IMAGES.length > IMAGE_GRID_VISIBLE ? `<button type="button" class="room-form-images__more-btn">See more</button>` : ''}
+  `
+}
+
 function attachRoomsListeners(rooms: ApiRoom[]) {
   const roomFormOverlay = document.querySelector('.room-form-overlay')
   const roomForm = document.querySelector<HTMLFormElement>('#room-form')
   const addButton = document.querySelector('.rooms-section__add')
   const closeButton = document.querySelector('.room-form__close')
   const cancelButton = document.querySelector('.room-form__cancel')
-  const imagePreview = document.querySelector<HTMLElement>('.room-form-preview__image')
-  const fileInput = document.querySelector<HTMLInputElement>('#image-file')
 
   let selectedImageUrl = ''
 
-  const clearPreviewImage = () => {
-    if (!imagePreview) return
-    imagePreview.style.backgroundImage = ''
-    imagePreview.style.backgroundSize = ''
-    imagePreview.classList.remove('room-form-preview__image--filled')
+  const resetImageGrid = (overlay: Element | null) => {
+    overlay?.querySelectorAll<HTMLElement>('.room-form-images__thumb').forEach((thumb, i) => {
+      thumb.classList.toggle('room-form-images__thumb--hidden', i >= IMAGE_GRID_VISIBLE)
+      thumb.classList.remove('room-form-images__thumb--selected')
+    })
+    const btn = overlay?.querySelector<HTMLElement>('.room-form-images__more-btn')
+    if (btn) btn.textContent = 'See more'
   }
 
-  const setPreviewImage = (imageUrl: string) => {
-    if (!imagePreview) return
-    imagePreview.style.backgroundImage = `url("${imageUrl}")`
-    imagePreview.style.backgroundSize = 'cover'
-    imagePreview.classList.add('room-form-preview__image--filled')
-  }
-
-  const showRoomForm = () => {
-    roomFormOverlay?.classList.remove('hidden')
-  }
+  const lockScroll = () => { document.body.style.overflow = 'hidden' }
+  const unlockScroll = () => { document.body.style.overflow = '' }
 
   const closeRoomForm = () => {
     roomFormOverlay?.classList.add('hidden')
     roomForm?.reset()
     selectedImageUrl = ''
-    clearPreviewImage()
+    resetImageGrid(roomFormOverlay)
+    unlockScroll()
   }
 
-  if (addButton) {
-    addButton.addEventListener('click', () => showRoomForm())
-  }
+  document.querySelectorAll<HTMLElement>('.room-form-images__more-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const grid = btn.previousElementSibling as HTMLElement
+      const isExpanded = btn.textContent?.trim() === 'See less'
+      grid.querySelectorAll<HTMLElement>('.room-form-images__thumb').forEach((thumb, i) => {
+        if (i >= IMAGE_GRID_VISIBLE) thumb.classList.toggle('room-form-images__thumb--hidden', isExpanded)
+      })
+      btn.textContent = isExpanded ? 'See more' : 'See less'
+    })
+  })
 
-  if (closeButton) {
-    closeButton.addEventListener('click', () => closeRoomForm())
-  }
-
-  if (cancelButton) {
-    cancelButton.addEventListener('click', () => closeRoomForm())
-  }
+  addButton?.addEventListener('click', () => { roomFormOverlay?.classList.remove('hidden'); lockScroll() })
+  closeButton?.addEventListener('click', () => closeRoomForm())
+  cancelButton?.addEventListener('click', () => closeRoomForm())
 
   roomFormOverlay?.addEventListener('click', (event) => {
-    if (event.target === roomFormOverlay) {
-      closeRoomForm()
-    }
+    if (event.target === roomFormOverlay) closeRoomForm()
   })
 
-  imagePreview?.addEventListener('click', () => {
-    fileInput?.click()
-  })
-
-  fileInput?.addEventListener('change', async (event) => {
-    const target = event.target as HTMLInputElement
-    const file = target.files?.[0]
-    if (file && imagePreview) {
-      const imageUrl = await fileToBase64(file)
-      selectedImageUrl = imageUrl
-      setPreviewImage(imageUrl)
-    }
+  document.querySelectorAll<HTMLElement>('.room-form-overlay .room-form-images__thumb').forEach(thumb => {
+    thumb.addEventListener('click', () => {
+      document.querySelectorAll('.room-form-overlay .room-form-images__thumb')
+        .forEach(t => t.classList.remove('room-form-images__thumb--selected'))
+      thumb.classList.add('room-form-images__thumb--selected')
+      selectedImageUrl = thumb.getAttribute('src') || ''
+    })
   })
 
   roomForm?.addEventListener('submit', async (event) => {
@@ -99,7 +111,7 @@ function attachRoomsListeners(rooms: ApiRoom[]) {
     const rating = parseFloat((formData.get('rating') as string) || '0')
 
     if (!name || !location || !selectedImageUrl || isNaN(pricePrNight) || isNaN(rating)) {
-      alert('Please fill in all fields correctly.')
+      alert('Please fill in all fields and select an image.')
       return
     }
 
@@ -115,32 +127,17 @@ function attachRoomsListeners(rooms: ApiRoom[]) {
   // Edit form
   const editFormOverlay = document.querySelector('.room-edit-form-overlay')
   const editForm = document.querySelector<HTMLFormElement>('#room-edit-form')
-  const editImagePreview = document.querySelector<HTMLElement>('.room-edit-form-preview__image')
-  const editFileInput = document.querySelector<HTMLInputElement>('#edit-image-file')
 
   let editSelectedImageUrl = ''
   let currentEditRoomId = 0
-
-  const setEditPreviewImage = (imageUrl: string) => {
-    if (!editImagePreview) return
-    editImagePreview.style.backgroundImage = `url("${imageUrl}")`
-    editImagePreview.style.backgroundSize = 'cover'
-    editImagePreview.classList.add('room-form-preview__image--filled')
-  }
-
-  const clearEditPreviewImage = () => {
-    if (!editImagePreview) return
-    editImagePreview.style.backgroundImage = ''
-    editImagePreview.style.backgroundSize = ''
-    editImagePreview.classList.remove('room-form-preview__image--filled')
-  }
 
   const closeEditForm = () => {
     editFormOverlay?.classList.add('hidden')
     editForm?.reset()
     editSelectedImageUrl = ''
     currentEditRoomId = 0
-    clearEditPreviewImage()
+    resetImageGrid(editFormOverlay)
+    unlockScroll()
   }
 
   document.querySelector('.room-edit-form__close')?.addEventListener('click', () => closeEditForm())
@@ -150,15 +147,13 @@ function attachRoomsListeners(rooms: ApiRoom[]) {
     if (event.target === editFormOverlay) closeEditForm()
   })
 
-  editImagePreview?.addEventListener('click', () => editFileInput?.click())
-
-  editFileInput?.addEventListener('change', async (event) => {
-    const file = (event.target as HTMLInputElement).files?.[0]
-    if (file) {
-      const imageUrl = await fileToBase64(file)
-      editSelectedImageUrl = imageUrl
-      setEditPreviewImage(imageUrl)
-    }
+  document.querySelectorAll<HTMLElement>('.room-edit-form-overlay .room-form-images__thumb').forEach(thumb => {
+    thumb.addEventListener('click', () => {
+      document.querySelectorAll('.room-edit-form-overlay .room-form-images__thumb')
+        .forEach(t => t.classList.remove('room-form-images__thumb--selected'))
+      thumb.classList.add('room-form-images__thumb--selected')
+      editSelectedImageUrl = thumb.getAttribute('src') || ''
+    })
   })
 
   editForm?.addEventListener('submit', async (event) => {
@@ -171,7 +166,7 @@ function attachRoomsListeners(rooms: ApiRoom[]) {
     const rating = parseFloat((formData.get('rating') as string) || '0')
 
     if (!name || !location || !editSelectedImageUrl || isNaN(pricePrNight) || isNaN(rating)) {
-      alert('Please fill in all fields correctly.')
+      alert('Please fill in all fields and select an image.')
       return
     }
 
@@ -206,8 +201,12 @@ function attachRoomsListeners(rooms: ApiRoom[]) {
       if (ratingInput) ratingInput.value = String(room.rating)
       if (priceInput) priceInput.value = String(room.pricePrNight)
 
-      setEditPreviewImage(room.image)
+      document.querySelectorAll<HTMLElement>('.room-edit-form-overlay .room-form-images__thumb').forEach(thumb => {
+        thumb.classList.toggle('room-form-images__thumb--selected', thumb.getAttribute('src') === room.image)
+      })
+
       editFormOverlay?.classList.remove('hidden')
+      lockScroll()
     })
   })
 
@@ -232,23 +231,21 @@ function attachRoomsListeners(rooms: ApiRoom[]) {
 export async function RoomsPage() {
   const rooms: ApiRoom[] = await getRooms()
 
-  console.log('ROOMS:', rooms)
-
   const roomsCards = rooms
-    .map((room) => {
-      const rating = `${room.rating}/5`
-      
-      return RoomCard({
+    .map((room) =>
+      RoomCard({
         image: room.image,
         title: room.name,
         location: room.location,
-        rating: rating,
+        rating: `${room.rating}/5`,
         price: `${room.pricePrNight} NOK`,
         isBooked: false,
         roomId: room.id
       })
-    })
+    )
     .join('')
+
+  const imageGrid = buildImageGrid()
 
   const html = `
     <section class="rooms-section container">
@@ -276,9 +273,9 @@ export async function RoomsPage() {
             </button>
           </div>
 
-          <div class="room-form-preview">
-            <div class="room-form-preview__image"></div>
-            <input type="file" id="image-file" accept="image/*" style="display: none;">
+          <div class="room-form-images">
+            <label class="room-form__label">Select image</label>
+            ${imageGrid}
           </div>
 
           <form class="room-form" id="room-form">
@@ -319,9 +316,9 @@ export async function RoomsPage() {
             </button>
           </div>
 
-          <div class="room-form-preview">
-            <div class="room-edit-form-preview__image room-form-preview__image"></div>
-            <input type="file" id="edit-image-file" accept="image/*" style="display: none;">
+          <div class="room-form-images">
+            <label class="room-form__label">Select image</label>
+            ${imageGrid}
           </div>
 
           <form class="room-form" id="room-edit-form">
