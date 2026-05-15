@@ -3,9 +3,6 @@ import './styles/components.css'
 import './styles/pages.css'
 import 'flatpickr/dist/flatpickr.min.css'
 
-<<<<<<< HEAD
-import "./pages/myBookings/myBookings"
-=======
 import flatpickr from 'flatpickr'
 import { Header } from './components/header'
 import { Footer } from './components/footer'
@@ -81,4 +78,3 @@ async function renderApp() {
 ;(window as any).renderApp = renderApp
 
 renderApp()
->>>>>>> main
