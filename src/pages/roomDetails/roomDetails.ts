@@ -19,7 +19,6 @@ if (footerContainer) {
   footerContainer.innerHTML = Footer();
 }
 
-//Dette er en "regelbok" for hvordan review skal se ut. Nå vet TS at review skal inneholde disse dataene.
 type Review = {
   id: number;
   userId: number;
@@ -39,7 +38,6 @@ type Room = {
   reviews: Review[];
 };
 
-//Alle disse er konstanter som blir hentet frem i funksjonen nedenfor, og som også kan gjenbrukes utenfor den ene funksjonen
 const roomTitle = document.getElementById("room-title");
 const roomPrice = document.getElementById("room-price");
 const roomMaxGuests = document.getElementById("room-max-guests");
@@ -55,11 +53,11 @@ const reviewComment = document.getElementById("review-comment");
 
 const params = new URLSearchParams(window.location.search);
 const roomId = params.get("id");
-const API_BASE_URL = "http://localhost:3000/api"; //I stedet for å skrive inn url flere ganger, kan jeg enkelt hente den herfra.
+const API_BASE_URL = "http://localhost:3000/api";
 const apiKey = "Gruppe13";
 
-let currentRoom: Room | null = null; //currentRoom er enten typen Room ELLER null
-let editingReviewId: number | null = null; //editingReviewId er enten typen number ELLER null
+let currentRoom: Room | null = null;
+let editingReviewId: number | null = null;
 
 function renderStars(rating: number) {
   return "⭐️".repeat(rating);
@@ -81,8 +79,6 @@ function hideSpinner() {
   }
 }
 
-//Bruker if fordi dette er en sikkerhetssjekk, hvis elementet finnes bruk det.
-//Finner HTML elementet med samme id, og setter setter teksten lik det som er lagret i APIet.
 function renderRoom(room: Room) {
   if (roomTitle) {
     roomTitle.textContent = room.name;
@@ -101,13 +97,12 @@ function renderRoom(room: Room) {
 
 function renderFeatures(features: string[]) {
   if (!roomFeatures) return;
-  roomFeatures.innerHTML = ""; //hvis fetchRooms() kjøres flere ganger, kan man få problemer med fuplikater. Derfor "tømmes" containeren før det settes inn noe.
+  roomFeatures.innerHTML = "";
 
   features.forEach((feature: string) => {
-    //går gjennom hver feature i arrayet
-    const li = document.createElement("li"); //lager et nytt listepunkt
-    li.textContent = feature; //setter inn teksten fra APIet, men vises enda ikke på siden
-    roomFeatures.appendChild(li); //appendChild betyr å legge et HTML-element inn i et annet HTML-element
+    const li = document.createElement("li");
+    li.textContent = feature;
+    roomFeatures.appendChild(li);
   });
 }
 
@@ -211,20 +206,17 @@ async function saveReviews(updatedReviews: Review[]) {
   }
 }
 
-//API-kall tar tid, derfor må det være async og await for at koden skal kjøre riktig.
 async function fetchRooms() {
-  //vis "Laster rom" frem til siden er ferdig lastet
   showSpinner();
 
-  //Prøv å laste inn data fra API
   try {
-    const response = await fetch(`${API_BASE_URL}/rooms/${roomId}`); //Hent rooms fra APIet, men vent til API svarer. ${} kalles tempalte literal, kan bruke variabler i tekst
+    const response = await fetch(`${API_BASE_URL}/rooms/${roomId}`);
     if (!response.ok) {
       throw new Error("Kunne ikke hente rom.");
     }
 
-    const room: Room = await response.json(); //gjør API svaret om til JavaScript-data, altså et objekt som kan brukes.
-    currentRoom = room; //her er en variabel begge kan bruke, og ikke bare inne i fetchRooms()
+    const room: Room = await response.json();
+    currentRoom = room;
 
     hideSpinner();
 
@@ -246,25 +238,19 @@ async function fetchRooms() {
 fetchRooms();
 
 if (reviewForm) {
-  //Når review-skjemaet sendes inn gjør dette...
   reviewForm.addEventListener("submit", async (event) => {
-    event.preventDefault(); //ikke refresh siden
+    event.preventDefault();
 
-    const rating = (reviewRating as HTMLSelectElement).value; //as HTMLSelectElement sier "behandle dette som et select-element, sånn at jeg kan hente value"
-    const comment = (reviewComment as HTMLTextAreaElement).value; //as HTMLTextAreaElement sier "behandle dette som et text-element"
-
-    //alt som skal skje når brukeren trykker submit, må stå inne i addEventListner-funksjonen
+    const rating = (reviewRating as HTMLSelectElement).value;
+    const comment = (reviewComment as HTMLTextAreaElement).value;
 
     if (!rating || !comment) {
-      //denne betyr at hvis rating eller comment mangler, så skal funksjonen stoppes og sender ut en melding.
-
       if (errorMessage) {
-        errorMessage.style.display = "block"; //viser kun meldingen om ikke alle feltene er fylt ut
+        errorMessage.style.display = "block";
         errorMessage.textContent =
           "You need to choose how many stars and wrtite a review for this place.";
 
         setTimeout(() => {
-          //Denne gjør at popupen forsvinner etter 5 sekunder
           if (errorMessage) {
             errorMessage.style.display = "none";
           }
@@ -279,20 +265,18 @@ if (reviewForm) {
       userId: 1,
       rating: Number(rating),
       comment: comment,
-      created: new Date().toISOString(), //toISOString brukes for å få et bestemt format på datoen som overføres til APIet
+      created: new Date().toISOString(),
       updated: new Date().toISOString(),
     };
 
     alert("Review submitted");
 
-    let updatedReviews: Review[]; //Dette er en tom variabel
+    let updatedReviews: Review[];
     if (editingReviewId !== null) {
       if (!currentRoom) return;
-      //map() går gjennom alle reviews
+
       updatedReviews = currentRoom.reviews.map((review: Review) => {
-        //Dette betyr "fant reviewet som skal redigeres"
         if (review.id === editingReviewId) {
-          //behold alt gammelt, men oppdater rating/comment
           return {
             ...review,
             rating: Number(rating),
@@ -300,11 +284,10 @@ if (reviewForm) {
             updated: new Date().toISOString(),
           };
         }
-        return review; //Alle andre reviews skal være uendret
+        return review;
       });
     } else {
       if (!currentRoom) return;
-      //Dette betyr at hvis vi ikke redigerer en anmeldelse, skal det lages en ny.
       updatedReviews = [...currentRoom.reviews, newReview];
     }
 
@@ -364,7 +347,7 @@ async function createBooking() {
 
   const newBooking = {
     id: Date.now(),
-    userId: 1, //her ville det ikke stått 1, men den hadde hentet userId fra brukeren som er logget inn. Evt spørr Sirirn om hva userId blir lagret som i localStorage!
+    userId: 1,
     roomId: Number(roomId),
     fromDate,
     toDate,
