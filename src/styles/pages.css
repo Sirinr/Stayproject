@@ -223,11 +223,12 @@
   position: fixed;
   inset: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   background: rgba(0, 0, 0, 0.45);
   z-index: 50;
   padding: 24px;
+  overflow-y: auto;
 }
 
 .room-form-overlay.hidden,
@@ -241,6 +242,7 @@
   border-radius: var(--radius-main);
   padding: 28px;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.15);
+  margin: auto;
 }
 
 .room-form-header {
@@ -361,5 +363,55 @@
 .room-form__cancel {
   background-color: var(--background_cards);
   color: var(--text_01);
+}
+
+.room-form-images {
+  margin-bottom: 24px;
+}
+
+.room-form-images__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.room-form-images__thumb {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-main);
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: border-color 0.2s, opacity 0.2s;
+}
+
+.room-form-images__thumb:hover {
+  opacity: 0.85;
+}
+
+.room-form-images__thumb--selected {
+  border-color: var(--accent-color_01);
+}
+
+.room-form-images__thumb--hidden {
+  display: none;
+}
+
+.room-form-images__more-btn {
+  margin-top: 8px;
+  background: none;
+  border: none;
+  color: var(--accent-color_01);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fs-body);
+  padding: 4px 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.room-form-images__more-btn:hover {
+  opacity: 0.75;
 }
 
