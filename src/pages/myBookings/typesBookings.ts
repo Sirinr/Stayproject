@@ -1,3 +1,4 @@
+/*Sirin Rosøy*/
 export type BookingsData = {
 id: number;
 userId: number;

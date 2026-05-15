@@ -1,5 +1,8 @@
+/*Sirin Rosøy*/
+
 import { Header } from "../../components/header"
 import { Footer } from "../../components/footer"
+import "./myBookings.css"
 import type {BookingsData} from "./typesBookings"
 import { 
 fetchBookings,
