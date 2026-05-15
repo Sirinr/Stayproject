@@ -1,6 +1,5 @@
 //Johanne Sausgard
 import { Header } from "../../components/header";
-
 const headerContainer = document.getElementById("header");
 if (headerContainer) {
   headerContainer.innerHTML = Header();
@@ -13,7 +12,6 @@ if (searchBarContainer) {
 }
 
 import { Footer } from "../../components/footer";
-
 const footerContainer = document.getElementById("footer");
 if (footerContainer) {
   footerContainer.innerHTML = Footer();
@@ -37,22 +35,30 @@ type Room = {
   features: string[];
   reviews: Review[];
 };
+const loadingSpinner = document.getElementById("loading-spinner");
+const errorMessage = document.getElementById("error-message");
 
 const roomTitle = document.getElementById("room-title");
 const roomPrice = document.getElementById("room-price");
 const roomMaxGuests = document.getElementById("room-max-guests");
 const roomDescription = document.getElementById("room-description");
 const roomFeatures = document.getElementById("room-features");
+
 const reviewsContainer = document.getElementById("reviews-container");
-const loadingSpinner = document.getElementById("loading-spinner");
-const errorMessage = document.getElementById("error-message");
 const reviewSubmitBtn = document.getElementById("review-submit-btn");
 const reviewForm = document.getElementById("review-form");
 const reviewRating = document.getElementById("review-rating");
 const reviewComment = document.getElementById("review-comment");
 
+const bookingForm = document.getElementById("booking-form");
+const checkInInput = document.querySelector(".check-in");
+const checkOutInput = document.querySelector(".check-out");
+const guestNumberInput = document.querySelector(".guest-number");
+const inquiryInput = document.getElementById("booking-inquiry");
+
 const params = new URLSearchParams(window.location.search);
 const roomId = params.get("id");
+
 const API_BASE_URL = "http://localhost:3000/api";
 const apiKey = "Gruppe13";
 
@@ -63,7 +69,7 @@ function renderStars(rating: number) {
   return "⭐️".repeat(rating);
 }
 
-function formateDate(dateString: string) {
+function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString("no-NO");
 }
 
@@ -128,13 +134,14 @@ function renderReviewCard(review: Review) {
 
   reviewCard.innerHTML = `
     <p>${renderStars(review.rating)}</p>
-    <p>Publisert: ${formateDate(review.created)}</p>
+    <p>Publisert: ${formatDate(review.created)}</p>
     <p>${review.comment}</p>
     <button class="delete-review-btn">Delete</button>
     <button class="edit-review-btn">Edit</button>
     `;
 
   const deleteBtn = reviewCard.querySelector(".delete-review-btn");
+
   deleteBtn?.addEventListener("click", async () => {
     if (!currentRoom) return;
 
@@ -146,6 +153,7 @@ function renderReviewCard(review: Review) {
   });
 
   const editBtn = reviewCard.querySelector(".edit-review-btn");
+
   editBtn?.addEventListener("click", () => {
     startEditReview(review);
   });
@@ -181,7 +189,7 @@ async function saveReviews(updatedReviews: Review[]) {
       throw new Error(`The API returned an error code: ${response.status}`);
     }
 
-    const updatedRoom = await response.json();
+    const updatedRoom: Room = await response.json();
 
     currentRoom = updatedRoom;
 
@@ -201,7 +209,7 @@ async function saveReviews(updatedReviews: Review[]) {
 
     if (errorMessage) {
       errorMessage.style.display = "block";
-      errorMessage.textContent = "Noe gikk galt ved lagring av anmeldelsen";
+      errorMessage.textContent = "Something went wrong with saving your review";
     }
   }
 }
@@ -212,30 +220,26 @@ async function fetchRooms() {
   try {
     const response = await fetch(`${API_BASE_URL}/rooms/${roomId}`);
     if (!response.ok) {
-      throw new Error("Kunne ikke hente rom.");
+      throw new Error("Could not get room");
     }
 
     const room: Room = await response.json();
     currentRoom = room;
 
-    hideSpinner();
-
     renderRoom(room);
-
     renderFeatures(room.features);
-
     renderReviews(room.reviews);
+
+    hideSpinner();
   } catch (error) {
     hideSpinner();
     if (errorMessage) {
-      errorMessage.textContent = "noe gikk galt ved henting av rom.";
+      errorMessage.textContent = "Something went wrong while fetching the room";
     }
 
-    console.log(error);
+    console.error(error);
   }
 }
-
-fetchRooms();
 
 if (reviewForm) {
   reviewForm.addEventListener("submit", async (event) => {
@@ -248,7 +252,7 @@ if (reviewForm) {
       if (errorMessage) {
         errorMessage.style.display = "block";
         errorMessage.textContent =
-          "You need to choose how many stars and wrtite a review for this place.";
+          "You need to choose how many stars and write a review for this place.";
 
         setTimeout(() => {
           if (errorMessage) {
@@ -260,7 +264,7 @@ if (reviewForm) {
       return;
     }
 
-    const newReview = {
+    const newReview: Review = {
       id: Date.now(),
       userId: 1,
       rating: Number(rating),
@@ -295,12 +299,6 @@ if (reviewForm) {
   });
 }
 
-const bookingForm = document.getElementById("booking-form");
-const checkInInput = document.querySelector(".check-in");
-const checkOutInput = document.querySelector(".check-out");
-const guestNumberInput = document.querySelector(".guest-number");
-const inquiryInput = document.getElementById("booking-inquiry");
-
 function getBookingFormData() {
   return {
     fromDate: (checkInInput as HTMLInputElement).value,
@@ -320,7 +318,7 @@ function validateBooking(
     if (errorMessage) {
       errorMessage.style.display = "block";
       errorMessage.textContent =
-        "Du må fylle ut dato, antall gjester og skrive en forespørsel.";
+        "You must fill in the date, number of guests, and write a request";
     }
 
     return false;
@@ -329,7 +327,7 @@ function validateBooking(
   if (!roomId) {
     if (errorMessage) {
       errorMessage.style.display = "block";
-      errorMessage.textContent = "Fant ikke rom-id";
+      errorMessage.textContent = "Could not find room-id";
     }
 
     return false;
@@ -381,7 +379,7 @@ function resetBookingForm() {
   (checkInInput as HTMLInputElement).value = "";
   (checkOutInput as HTMLInputElement).value = "";
   (guestNumberInput as HTMLInputElement).value = "";
-  (inquiryInput as HTMLInputElement).value = "";
+  (inquiryInput as HTMLTextAreaElement).value = "";
 }
 
 async function handleBookingSubmit(event: SubmitEvent) {
@@ -395,7 +393,7 @@ async function handleBookingSubmit(event: SubmitEvent) {
     if (errorMessage) {
       errorMessage.style.display = "block";
       errorMessage.textContent =
-        "Something went wrong whit submitting your request.";
+        "Something went wrong with submitting your request.";
     }
   }
 }
@@ -403,3 +401,5 @@ async function handleBookingSubmit(event: SubmitEvent) {
 if (bookingForm) {
   bookingForm.addEventListener("submit", handleBookingSubmit);
 }
+
+fetchRooms();
