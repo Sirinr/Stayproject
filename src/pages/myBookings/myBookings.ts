@@ -1,7 +1,4 @@
 /*Sirin Rosøy*/
-
-import { Header } from "../../components/header"
-import { Footer } from "../../components/footer"
 import "./myBookings.css"
 import type {BookingsData} from "./typesBookings"
 import { 
@@ -34,27 +31,12 @@ async function fetchRooms () {
   return data
 }
 
-async function displayBookings() {
-  renderMyBookingsPage()
-
-const bookingData = await fetchBookings ()
-const RoomData = await fetchRooms ()
-
-if (bookingData) {
-  bookings=bookingData
-  }
-rooms = RoomData
-
-    renderMyBookingsPage()
-  }
-
-displayBookings();
 
 async function deleteBooking(id: number) {
   await deleteBookingApi (id)
   
   bookings = bookings.filter((booking) => booking.id !== id)
-  renderMyBookingsPage()
+  ;(window as any).renderApp()
 }
 
 async function addBooking(event: Event) {
@@ -107,7 +89,7 @@ if (currentEditBookingId !== null) {
     bookings.push(savedBooking)
   }
   }
-  renderMyBookingsPage()
+  ;(window as any).renderApp()
   
 }
 
@@ -188,20 +170,30 @@ closeFormButton?.addEventListener("click", () => {
   }
  }
 
-export function MyBookingsPage() {
+export async function MyBookingsPage() {
+  const bookingData = await fetchBookings()
+  const roomData = await fetchRooms()
+
+  if (bookingData) {
+    bookings = bookingData
+  }
+
+  rooms = roomData
+
   const activeBookings = bookings.filter(
-    (booking) => booking.status === "pending" || booking.status === "confirmed"
+    (booking) =>
+      booking.status === "pending" ||
+      booking.status === "confirmed"
   )
 
   const pastBookings = bookings.filter(
-    (booking) => 
-      booking.status === "expired"  ||
-    booking.status === "cancelled"
+    (booking) =>
+      booking.status === "expired" ||
+      booking.status === "cancelled"
   )
 
-  return `
-    ${Header()}
-    <main>
+  const html = `
+
       <section class="my-bookings-section container">
         <div class="my-bookings-section__header">
           <h1 class="my-bookings-section__title">My Bookings</h1>
@@ -251,12 +243,16 @@ Save booking</button>
             const room =rooms.find((room)=> room.id === booking.roomId)
             return `
           <article class="booking-card" data-id="${booking.id}">
-            <div class="booking-card__image"></div>
+            <div class="booking-card__image">
+            <img src="${room?.image || "/images/room-1.jpg"}" alt="${room?.name || "Room image"}" />
+            </div>
 
             <div class="booking-card__content">
               <div class="booking-card__top">
                 <h3 class="booking-card__title">${room?.name || `Room ${booking.roomId}`}</h3>
-                <button class="booking-card__icon edit-btn" data-id="${booking.id}" type="button">Edit</button>
+                <button class="booking-card__icon edit-btn" data-id="${booking.id}" type="button" aria-label="Edit booking">
+                <img src="/icons/icon-edit.svg" alt="Edit"/>
+                </button>
               </div>
               <p class="booking-card__dates">${booking.fromDate} - ${booking.toDate}</p>
               <p class="booking-card__status">${booking.status}</p>
@@ -306,17 +302,11 @@ Save booking</button>
           </button>
         </div>
       </section>
-    </main>
-    ${Footer()}
-  `
+
+     `
+
+   return  {
+   html,
+   attachListeners: () => addEventListeners ()
 }
-
-export function renderMyBookingsPage() {
-  const app = document.querySelector<HTMLDivElement>("#app")
-
-  if (!app) return
-
-  app.innerHTML = MyBookingsPage()
-  addEventListeners()
 }
-

@@ -51,10 +51,9 @@
 }
 
 .booking-card__image {
-  width: 160px;
-  height: 110px;
-  background-color: #9a9a9a;
-  border-radius: 10px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .booking-card__content {
@@ -85,11 +84,9 @@
   color: #333;
 }
 
-.booking-card__icon {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
+.booking-card__icon img {
+  widht: 18px;
+  height: 18px;
 }
 
 .booking-card__actions {
@@ -179,9 +176,11 @@
 .close-booking-form-btn {
   align-self: flex-end;
   border: none;
-  background: transparent;
+  background-color: transparent;
+  color: black;
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1rem;
+  border-radius: 50%;
 }
 
 .booking-form-overlay:not(.hidden) {
