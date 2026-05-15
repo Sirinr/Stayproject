@@ -1,62 +1,82 @@
 import { Header } from "../../components/header"
 import { Footer } from "../../components/footer"
+import type {BookingsData} from "./typesBookings"
+import { 
+  fetchBookings,
+addBookingApi,
+editBookingApi,
+deleteBookingApi, 
+} from "./apiBookings"
 
-let bookings = [
-  {
-    id: 1,
-    roomId: 1,
-    fromDate: "2026-01-11",
-    toDate: "2026-01-12",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    roomId: 2,
-    fromDate: "2026-02-14",
-    toDate: "2026-02-18",
-    status: "Confirmed",
-  },
-  {
-    id: 3,
-    roomId: 3,
-    fromDate: "2026-02-27",
-    toDate: "2026-02-28",
-    status: "Expired",
-  },
-]
+let bookings: BookingsData[] = []
 
-function deleteBooking(id: number) {
+async function displayBookings() {
+  renderMyBookingsPage()
+
+  const data = await fetchBookings()
+  console.log(data)
+
+  if (data) {
+    bookings = data
+    renderMyBookingsPage()
+  }
+}
+
+displayBookings();
+
+async function deleteBooking(id: number) {
+  await deleteBookingApi (id)
+  
   bookings = bookings.filter((booking) => booking.id !== id)
   renderMyBookingsPage()
 }
 
-function addBooking() {
-  const newBooking = {
+async function addBooking() {
+  const newBooking: BookingsData = {
     id: Date.now(),
+    userId: 1,
     roomId: 4,
     fromDate: "2026-03-01",
     toDate: "2026-03-05",
-    status: "Pending",
+    status: "pending",
+    message: "",
+    created: "",
+    updated: "",
   }
 
-  bookings.push(newBooking)
-  renderMyBookingsPage()
+  const savedBooking = await addBookingApi(newBooking)
+
+  if (savedBooking)  {
+    bookings.push(savedBooking)
+    renderMyBookingsPage ()
+}
 }
 
-function editBooking(id: number) {
+async function editBooking(id: number) {
+  const editTheBooking = bookings.find ((booking) => booking.id === id)
+
+if (!editTheBooking) return
+
+const newBookingStatus =
+editTheBooking.status === "pending" ? "confirmed" : "pending"
+
+const updatedBooking = await editBookingApi (id, {
+  status: newBookingStatus,
+})
+
+if (updatedBooking) {
   bookings = bookings.map((booking) => {
     if (booking.id === id) {
-      return {
-        ...booking,
-        status: booking.status === "Pending" ? "Confirmed" : "Pending",
+      return updatedBooking
       }
-    }
-
+      
     return booking
   })
 
   renderMyBookingsPage()
 }
+}
+
 
 function addEventListeners() {
   const deleteButtons = document.querySelectorAll(".delete-btn")
@@ -77,20 +97,20 @@ function addEventListeners() {
     })
   })
 
-  const addButton = document.querySelector(".add-booking-btn")
+  const addForm = document.querySelector<HTMLFormElement(".add-booking-form")
 
-  if (addButton) {
-    addButton.addEventListener("click", addBooking)
+  if (addForm) {
+    addForm.addEventListener("submit", addBooking)
   }
 }
 
 export function MyBookingsPage() {
   const activeBookings = bookings.filter(
-    (booking) => booking.status === "Pending" || booking.status === "Confirmed"
+    (booking) => booking.status === "pending" || booking.status === "confirmed"
   )
 
   const pastBookings = bookings.filter(
-    (booking) => booking.status === "Expired"
+    (booking) => booking.status === "expired"
   )
 
   return `
@@ -104,7 +124,13 @@ export function MyBookingsPage() {
         <h2 class="my-bookings-section__subtitle">Active</h2>
 
         <div class="my-bookings-section__add">
-          <button class="add-booking-btn" type="button">+ Add booking</button>
+<form class= "add-booking-form">
+<input class="room-id" type="number" placeholder:"Room id"/>
+<input class="from-date" type="date"/>
+<input class="to-date" type="date"/>
+<input class="message-input" type="text" placeholder="Message"/>
+          <button class="add-booking-btn" type="submit">+ Add booking</button>
+          </form>
         </div>
 
         ${activeBookings
