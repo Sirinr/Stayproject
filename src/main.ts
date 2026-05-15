@@ -8,6 +8,7 @@ import { Header } from './components/header'
 import { Footer } from './components/footer'
 import { Hero } from './components/hero'
 import { RoomsPage } from './pages/rooms/rooms'
+import { MyBookingsPage } from './pages/myBookings/myBookings'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 
@@ -17,7 +18,7 @@ async function renderApp() {
   app.innerHTML = `<div class="spinner-wrapper"><div class="spinner"></div></div>`
 
   try {
-    const roomsPage = await RoomsPage()
+    const roomsPage = await MyBookingsPage()
 
     app.innerHTML = `
       ${Header()}
