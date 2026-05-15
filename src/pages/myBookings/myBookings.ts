@@ -31,17 +31,26 @@ async function deleteBooking(id: number) {
   renderMyBookingsPage()
 }
 
-async function addBooking() {
+async function addBooking(event: Event) {
+  event.preventDefault()
+
+  const roomIdInput = document.querySelector<HTMLInputElement>(".room-id-input")
+  const fromDateInput = document.querySelector<HTMLInputElement>(".from-date-input")
+  const toDateInput = document.querySelector<HTMLInputElement>(".to-date-input")
+  const messageInput = document.querySelector<HTMLInputElement>(".message-input")
+
+  if (!roomIdInput || !fromDateInput || !toDateInput || !messageInput) return
+
   const newBooking: BookingsData = {
     id: Date.now(),
     userId: 1,
-    roomId: 4,
-    fromDate: "2026-03-01",
-    toDate: "2026-03-05",
+    roomId: Number(roomIdInput.value),
+    fromDate: fromDateInput.value,
+    toDate: toDateInput.value,
     status: "pending",
-    message: "",
-    created: "",
-    updated: "",
+    message: messageInput.value,
+    created: new Date ().toISOString(),
+    updated: new Date ().toISOString(),
   }
 
   const savedBooking = await addBookingApi(newBooking)
@@ -97,7 +106,20 @@ function addEventListeners() {
     })
   })
 
-  const addForm = document.querySelector<HTMLFormElement(".add-booking-form")
+  
+const openFormButton = document.querySelector(".open-booking-form-btn")
+const closeFormButton = document.querySelector(".close-booking-form-btn")
+const formOverlay = document.querySelector(".booking-form-overlay")
+
+openFormButton?.addEventListener("click", () => {
+  formOverlay?.classList.remove("hidden")
+})
+
+closeFormButton?.addEventListener("click", () => {
+  formOverlay?.classList.add("hidden")
+})
+
+  const addForm = document.querySelector<HTMLFormElement>(".add-booking-form")
 
   if (addForm) {
     addForm.addEventListener("submit", addBooking)
@@ -122,15 +144,41 @@ export function MyBookingsPage() {
         </div>
 
         <h2 class="my-bookings-section__subtitle">Active</h2>
+<div class="my-bookings-section__add">
+<button class="open-booking-form-btn" type="button">+ Add booking</button>
+</div>
 
-        <div class="my-bookings-section__add">
+<div class="booking-form-overlay hidden">
+<div class="booking-form-box">
+<button class="close-booking-form-btn" type="button">x</button>
+
+<h2> Add booking </h2>
+
 <form class= "add-booking-form">
-<input class="room-id" type="number" placeholder:"Room id"/>
-<input class="from-date" type="date"/>
-<input class="to-date" type="date"/>
+<label>
+Room ID
+<input class="room-id-input" type="number" required />
+</label>
+
+<label>
+From date
+<input class="from-date-input" type="date" required/>
+</label>
+
+<label>
+To date
+<input class="to-date-input" type="date" required/>
+</label>
+
+<label>
+Message
 <input class="message-input" type="text" placeholder="Message"/>
-          <button class="add-booking-btn" type="submit">+ Add booking</button>
+</label>
+
+<button class="add-booking-btn" type="submit">
+Save booking</button>
           </form>
+        </div>
         </div>
 
         ${activeBookings

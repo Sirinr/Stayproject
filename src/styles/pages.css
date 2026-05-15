@@ -134,3 +134,68 @@
     justify-content: flex-start;
   }
 }
+
+/*booking-form*/
+.booking-form-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+ display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 1000;
+}
+
+.booking-form-box {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 20px;
+  width: 500px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.add-booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.add-booking-form input {
+  padding: 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.hidden {
+  display: none;
+}
+
+.close-booking-form-btn {
+  align-self: flex-end;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.booking-form-overlay:not(.hidden) {
+  display: flex;
+}
+
+.open-booking-form-btn {
+  background-color: #9b5a2e;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.open-booking-form-btn:hover {
+  opacity: 0.9;
+}
