@@ -199,3 +199,7 @@
 .open-booking-form-btn:hover {
   opacity: 0.9;
 }
+
+.edit-btn {
+  color: #474545;
+}
