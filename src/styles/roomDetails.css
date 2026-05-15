@@ -1,0 +1,209 @@
+/*Johanne Sausgard*/
+#search-bar {
+  margin: 30px;
+}
+
+.container-pic {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-self: center;
+  gap: 5px;
+  max-width: 80%;
+  margin: auto;
+}
+.container-pics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 5px;
+}
+
+.card-pics {
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  border-radius: 16px;
+}
+.card-pics img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.main-pic {
+  height: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+}
+.main-pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  max-width: 90%;
+  margin: 0 auto;
+  gap: var(--space-xl);
+  padding: var(--container-padding);
+}
+@media (max-width: 1200px) {
+  .details {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+  .booking-form,
+  #review-form {
+    max-width: 100%;
+    margin: 0;
+  }
+}
+
+#room-features {
+  list-style-type: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-md);
+  padding: 0;
+}
+
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: var(--space-md);
+  background-color: var(--background_cards);
+  border-radius: var(--radius-main);
+  padding: var(--space-xl);
+  color: var(--text_01);
+  width: 100%;
+  max-width: 800px;
+  height: 100%;
+  box-sizing: border-box;
+}
+.booking-form input,
+.booking-form select,
+.booking-form textarea {
+  border: 1px solid var(--text_03);
+  border-radius: 12px;
+  padding: var(--space-sm);
+  color: var(--text_01);
+  background-color: var(--background_cards);
+  box-sizing: border-box;
+}
+.booking-form button,
+#review-submit-btn,
+.delete-review-btn,
+.edit-review-btn {
+  background-color: var(--primary-actions);
+  color: var(--text_04);
+  border-radius: var(--radius-pill);
+  padding: var(--space-sm) var(--space-lg);
+  background-color: var(--accent-color_01);
+}
+.booking-form button {
+  margin-top: 10px;
+}
+.booking-form button:hover,
+#review-submit-btn:hover,
+.delete-review-btn:hover,
+.edit-review-btn:hover {
+  background-color: var(--accent-color_03);
+}
+.date-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+.date-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+#review-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  background: transparent;
+}
+.review-form-section {
+  margin-top: var(--space-xl);
+}
+#review-comment {
+  width: 100%;
+  min-height: 160px;
+  resize: vertical;
+  border: 2px solid var(--accent-color_01);
+  border-radius: var(--radius-main);
+}
+.review-form-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.reviews {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-2xl);
+  background-color: var(--background_main);
+}
+#reviews-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+  padding: var(--space-lg) 0;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  box-shadow: 0 2px 8px var(--secondary-color);
+  background-color: var(--background_cards);
+  color: var(--text_01);
+  padding: var(--space-lg);
+  border-radius: var(--radius-main);
+  width: 300px;
+  min-height: 350px;
+}
+
+.error-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--background_cards);
+  color: var(--primary-actions);
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--primary-actions);
+  display: none;
+}
+
+#loading-spinner {
+  width: 60px;
+  height: 60px;
+
+  border: 6px solid var(--primary-actions);
+  border-top: 6px solid var(--text_01);
+  border-radius: 50%;
+
+  animation: spin 1s linear infinite;
+
+  margin: 50px auto;
+  display: none;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

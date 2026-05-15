@@ -1,0 +1,122 @@
+<!--Johanne Sausgard-->
+<!doctype html>
+<html lang="no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../styles/base.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+    <link rel="stylesheet" href="../../styles/roomDetails.css" />
+    <title>Room Details</title>
+  </head>
+  <body>
+    <header id="header"></header>
+    <main>
+      <section id="search-bar"></section>
+
+      <section>
+        <div id="loading-spinner"></div>
+        <div id="error-message" class="error-popup"></div>
+
+        <a href="/STAY/src/pages/rooms/rooms.html">Back to rooms</a>
+      </section>
+      <section class="container-pic">
+        <div class="main-pic">
+          <img
+            src="https://images.unsplash.com/photo-1698933787134-af2d451985c7?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            alt="" />
+        </div>
+        <div class="container-pics">
+          <div class="card-pics">
+            <img
+              src="https://images.unsplash.com/photo-1542718610-a1d656d1884c?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="" />
+          </div>
+          <div class="card-pics">
+            <img
+              src="https://images.unsplash.com/photo-1722650273450-1e3681f53c83?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="" />
+          </div>
+          <div class="card-pics">
+            <img
+              src="https://images.unsplash.com/photo-1607582544644-f1da2a004994?q=80&w=1742&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="" />
+          </div>
+          <div class="card-pics">
+            <img
+              src="https://images.unsplash.com/photo-1721824295828-39e669aabb18?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="" />
+          </div>
+        </div>
+      </section>
+
+      <section class="details">
+        <article class="room-details-content">
+          <div class="room-wrapper">
+            <h1 id="room-title">Overskrift på rommet</h1>
+            <p id="room-price">Her kommer prisen pr. natt</p>
+            <p id="room-max-guests">Her kommer max anatll gjester</p>
+            <p id="room-description">Her kommer en beskrivelse av rommet</p>
+          </div>
+          <ul id="room-features"></ul>
+
+          <section class="review-form-section">
+            <h2>Create review</h2>
+
+            <form action="#" id="review-form">
+              <textarea id="review-comment" name="comment"></textarea>
+
+              <div class="review-form-bottom">
+                <select name="rating" id="review-rating">
+                  <option value="">☆☆☆☆☆</option>
+                  <option value="1">⭐️☆☆☆☆</option>
+                  <option value="2">⭐️⭐️☆☆☆</option>
+                  <option value="3">⭐️⭐️⭐️☆☆</option>
+                  <option value="4">⭐️⭐️⭐️⭐️☆</option>
+                  <option value="5">⭐️⭐️⭐️⭐️⭐️</option>
+                </select>
+
+                <button type="submit" id="review-submit-btn">Send</button>
+              </div>
+            </form>
+          </section>
+        </article>
+
+        <form action="#" id="booking-form">
+          <div class="booking-form">
+            <div class="date-fields">
+              <div class="date-group">
+                <label for="check-in">Check-in</label>
+                <input type="date" class="check-in" name="check-in" />
+              </div>
+              <div class="date-group">
+                <label for="check-out">Check-out</label>
+                <input type="date" class="check-out" name="check-out" />
+              </div>
+            </div>
+            <label for="guest-number">Guests</label>
+            <input
+              type="number"
+              class="guest-number"
+              name="guest-number"
+              placeholder="How many guests?" />
+            <label for="inqueries">Message</label>
+
+            <textarea name="inqueries" id="booking-inquiry"></textarea>
+
+            <button type="submit">Send request</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="reviews">
+        <h2>Reviews</h2>
+        <div id="reviews-container"></div>
+      </section>
+    </main>
+
+    <footer id="footer"></footer>
+
+    <script type="module" src="roomDetails.ts"></script>
+  </body>
+</html>
