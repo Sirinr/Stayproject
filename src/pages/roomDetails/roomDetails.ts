@@ -193,7 +193,7 @@ async function saveReviews(updatedReviews: Review[]) {
     (reviewComment as HTMLTextAreaElement).value = "";
 
     if (reviewSubmitBtn) {
-      reviewSubmitBtn.textContent = "Review submitted";
+      reviewSubmitBtn.textContent = "send";
     }
 
     fetchRooms();
