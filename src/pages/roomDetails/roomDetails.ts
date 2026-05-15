@@ -23,8 +23,8 @@ type Review = {
 type Room = {
   id: number;
   name: string;
+  location: string;
   pricePrNight: number;
-  maxGuests: number;
   description: string;
   features: string[];
   reviews: Review[];
@@ -34,7 +34,7 @@ const errorMessage = document.getElementById("error-message");
 
 const roomTitle = document.getElementById("room-title");
 const roomPrice = document.getElementById("room-price");
-const roomMaxGuests = document.getElementById("room-max-guests");
+const roomLocation = document.getElementById("room-location");
 const roomDescription = document.getElementById("room-description");
 const roomFeatures = document.getElementById("room-features");
 
@@ -54,7 +54,7 @@ const params = new URLSearchParams(window.location.search);
 const roomId = params.get("id");
 
 const API_BASE_URL = "http://localhost:3000/api";
-const apiKey = "Gruppe13";
+const apiKey: string = import.meta.env.VITE_API_KEY
 
 let currentRoom: Room | null = null;
 let editingReviewId: number | null = null;
@@ -85,10 +85,10 @@ function renderRoom(room: Room) {
   }
 
   if (roomPrice) {
-    roomPrice.textContent = `${room.pricePrNight} kr. per natt`;
+    roomPrice.textContent = `${room.pricePrNight} kr. per night`;
   }
-  if (roomMaxGuests) {
-    roomMaxGuests.textContent = `Maks ${room.maxGuests} gjester`;
+  if (roomLocation) {
+    roomLocation.textContent = room.location;
   }
   if (roomDescription) {
     roomDescription.textContent = room.description;

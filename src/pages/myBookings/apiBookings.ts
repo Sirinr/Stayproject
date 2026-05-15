@@ -1,7 +1,7 @@
 /*Sirin Rosøy*/
 
 import type { BookingsData } from "./typesBookings";
-const apiKey: string = "Stayproject1"
+const apiKey: string = import.meta.env.VITE_API_KEY
 const bookingApi = "http://localhost:3000/api/bookings"
 
 /*read*/

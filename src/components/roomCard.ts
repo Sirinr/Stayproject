@@ -56,9 +56,9 @@ export function RoomCard({
             <p class="room-card__price-note">per night</p>
           </div>
 
-          <button class="btn-main room-card__button" type="button">
+          <a class="btn-main room-card__button" href="/src/pages/roomDetails/roomDetails.html?id=${roomId}">
             View details
-          </button>
+          </a>
         </div>
       </div>
     </article>
