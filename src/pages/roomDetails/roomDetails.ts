@@ -5,12 +5,6 @@ if (headerContainer) {
   headerContainer.innerHTML = Header();
 }
 
-import { SearchBar } from "../../components/searchBar";
-const searchBarContainer = document.getElementById("search-bar");
-if (searchBarContainer) {
-  searchBarContainer.innerHTML = SearchBar();
-}
-
 import { Footer } from "../../components/footer";
 const footerContainer = document.getElementById("footer");
 if (footerContainer) {
@@ -199,7 +193,7 @@ async function saveReviews(updatedReviews: Review[]) {
     (reviewComment as HTMLTextAreaElement).value = "";
 
     if (reviewSubmitBtn) {
-      reviewSubmitBtn.textContent = "Review submitted";
+      reviewSubmitBtn.textContent = "send";
     }
 
     fetchRooms();
